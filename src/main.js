@@ -19,9 +19,10 @@ let config = {
     render: {
         pixelArt: true  // prevent pixel art from getting blurred when scaled
     },
+    fps: { forceSetTimeOut: true, target: 60 },   // ensure consistent timing across machines
     width: 500,
     height: 700,
-    scene: [Path]
+    scene: [SingleBullet, ArrayBullet, FixedArrayBullet, GroupBullet, ClassBullet]
 }
 
 // Global variable to hold sprites
