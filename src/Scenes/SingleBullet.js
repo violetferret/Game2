@@ -44,7 +44,7 @@ class SingleBullet extends Phaser.Scene {
         // Create key objects
         this.left = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
         this.right = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
-        this.nextScene = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RETURN);
+        this.nextScene = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.N);
         this.space = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
         // Set movement speeds (in pixels/tick)

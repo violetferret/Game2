@@ -37,7 +37,7 @@ class GroupBullet extends Phaser.Scene {
         let my = this.my;
 
         my.sprite.player = this.add.sprite(game.config.width/2, game.config.height - 40, "player");
-        my.sprite.player.setScale(0.25);
+        my.sprite.player.setScale(0.5);
 
         // In this approach, we create a single "group" game object which then holds up
         // to 10 bullet sprites
@@ -61,7 +61,7 @@ class GroupBullet extends Phaser.Scene {
          // Create key objects
          this.left = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
          this.right = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
-         this.nextScene = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RETURN);
+         this.nextScene = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.N);
          this.space = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
         // Set movement speeds (in pixels/tick)
@@ -69,7 +69,7 @@ class GroupBullet extends Phaser.Scene {
         this.bulletSpeed = 5;
 
         // update HTML description
-        document.getElementById('description').innerHTML = '<h2>Game Object Group Bullet.js</h2><br>A: left // D: right // Space: fire/emit // S: Next Scene'
+        document.getElementById('description').innerHTML = '<h2>Game Object Group Bullet.js</h2><br>Left Arrow Key: left // Right Arrow Key: right // Space: fire/emit // N: Next Scene'
 
     }
 

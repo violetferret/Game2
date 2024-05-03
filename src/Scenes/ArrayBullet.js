@@ -40,7 +40,7 @@ class ArrayBullet extends Phaser.Scene {
         let my = this.my;
 
         my.sprite.player = this.add.sprite(game.config.width/2, game.config.height - 40, "player");
-        my.sprite.player.setScale(0.25);
+        my.sprite.player.setScale(0.5);
 
         // Notice that in this approach, we don't create any bullet sprites in create(),
         // and instead wait until we need them, based on the number of space bar presses
@@ -49,7 +49,7 @@ class ArrayBullet extends Phaser.Scene {
          // Create key objects
         this.left = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
         this.right = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
-        this.nextScene = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RETURN);
+        this.nextScene = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.N);
         this.space = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
         // Set movement speeds (in pixels/tick)
@@ -57,7 +57,7 @@ class ArrayBullet extends Phaser.Scene {
         this.bulletSpeed = 5;
 
         // update HTML description
-        document.getElementById('description').innerHTML = '<h2>Array Bullet.js</h2><br>A: left // D: right // Space: fire/emit // S: Next Scene'
+        document.getElementById('description').innerHTML = '<h2>Game Object Group Bullet.js</h2>Left Arrow Key: Left // Right Arrow Key: Right // Space: Fire/Emit // N: Next Scene'
 
     }
 

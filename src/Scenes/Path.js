@@ -33,30 +33,11 @@ class Path extends Phaser.Scene {
             }
         }
         
-        // TODO: Create player sprite
-        my.sprite.player = this.add.sprite()
-
-        // Define key bindings
-        this.leftKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
-        this.rightKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
-        this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         
         
     }
 
     update() {
-
-        if (Phaser.Input.Keyboard.JustDown(this.leftKey)) {
-            console.log("Left");
-        }
-
-        if (Phaser.Input.Keyboard.JustDown(this.rightKey)) {
-            console.log("Right");
-        }   
-
-        if (Phaser.Input.Keyboard.JustDown(this.spaceKey)) {
-            console.log("Space");
-        }
 
     }
 

@@ -42,7 +42,7 @@ class FixedArrayBullet extends Phaser.Scene {
         let my = this.my;
 
         my.sprite.player = this.add.sprite(game.config.width/2, game.config.height - 40, "player");
-        my.sprite.player.setScale(0.25);
+        my.sprite.player.setScale(0.5);
 
         // In this approach we *do* create all of the bullet sprites in create(), since we will just
         // keep reusing them
@@ -55,7 +55,7 @@ class FixedArrayBullet extends Phaser.Scene {
          // Create key objects
          this.left = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
          this.right = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
-         this.nextScene = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RETURN);
+         this.nextScene = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.N);
          this.space = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
         // Set movement speeds (in pixels/tick)

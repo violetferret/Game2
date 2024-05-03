@@ -48,7 +48,7 @@ class ClassBullet extends Phaser.Scene {
 
         my.sprite.player = new Player(this, game.config.width/2, game.config.height - 40, "player", null,
                                         this.left, this.right, 5);
-        my.sprite.player.setScale(0.25);
+        my.sprite.player.setScale(0.5);
 
         // In this approach, we create a single "group" game object which then holds up
         // to 10 bullet sprites
