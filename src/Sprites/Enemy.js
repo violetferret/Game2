@@ -4,12 +4,15 @@ class Enemy extends Phaser.GameObjects.Sprite {
     curve;
     path;
 
-    constructor(x, y) {
+    constructor(scene, x, y, texture, frame, enemySpeed) {
         super("pathMaker");
-        // super(scene, x, y, texture, frame);
+        super(scene, x, y, texture, frame);
 
-        this.enemyX = Math.floor(Math.random() * 500);
-        this.enemyY = Math.floor(Math.random() * 700);
+        // this.enemyX = Math.floor(Math.random() * 500);
+        // this.enemyY = Math.floor(Math.random() * 700);
+        this.x = x;
+        this.y = y;
+
         this.visible = false;
         this.active = false;
 
@@ -21,13 +24,22 @@ class Enemy extends Phaser.GameObjects.Sprite {
     }
 
     update() {
-        if (this.X >= 500 || this.Y >= 700) {
-            this.destroy();
+        if (this.active) {
+            this.y -= this.speed;
+            if (this.y < -(this.displayHeight/2)) {
+                this.makeInactive();
+            }
         }
     }
 
-    follow() {
-        // this.path = ;
+    makeActive() {
+        this.visible = true;
+        this.active = true;
+    }
+
+    makeInactive() {
+        this.visible = false;
+        this.active = false;
     }
 
 }
