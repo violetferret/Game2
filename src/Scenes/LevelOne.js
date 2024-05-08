@@ -12,6 +12,9 @@ class ArrayBullet extends Phaser.Scene {
         // This array will hold bindings (pointers) to bullet sprites
         this.my.sprite.bullet = [];   
         this.maxBullets = 10;           // Don't create more than this many bullets
+
+        this.my.sprite.enemy = [];
+        this.maxEnemies = 10;
         
     }
 
@@ -42,6 +45,7 @@ class ArrayBullet extends Phaser.Scene {
         my.sprite.player = this.add.sprite(game.config.width/2, game.config.height - 40, "player");
         my.sprite.player.setScale(0.5);
 
+
         // Notice that in this approach, we don't create any bullet sprites in create(),
         // and instead wait until we need them, based on the number of space bar presses
 
@@ -55,6 +59,7 @@ class ArrayBullet extends Phaser.Scene {
         // Set movement speeds (in pixels/tick)
         this.playerSpeed = 5;
         this.bulletSpeed = 5;
+        this.enemySpeed = 2;
 
         // update HTML description
         document.getElementById('description').innerHTML = '<h2>Game Object Group Bullet.js</h2>Left Arrow Key: Left // Right Arrow Key: Right // Space: Fire/Emit // N: Next Scene'
@@ -89,6 +94,8 @@ class ArrayBullet extends Phaser.Scene {
                 );
             }
         }
+
+        
 
         // Make all of the bullets move
         for (let bullet of my.sprite.bullet) {
