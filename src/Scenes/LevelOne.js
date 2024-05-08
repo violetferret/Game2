@@ -1,21 +1,21 @@
-class ArrayBullet extends Phaser.Scene {
+class LevelOne extends Phaser.Scene {
     constructor() {
-        super("arrayBullet");
+        super("levelOne");
 
         // Initialize a class variable "my" which is an object.
         // The object has one property, "sprite" which is also an object.
         // This will be used to hold bindings (pointers) to created sprites.
         this.my = {sprite: {}};
 
+        // Set movement speeds (in pixels/tick)
+        this.playerSpeed = 5;
+        this.bulletSpeed = 5;
+
         // Create a property inside "sprite" named "bullet".
         // The bullet property has a value which is an array.
         // This array will hold bindings (pointers) to bullet sprites
-        this.my.sprite.bullet = [];   
-        this.maxBullets = 10;           // Don't create more than this many bullets
-
-        this.my.sprite.enemy = [];
-        this.maxEnemies = 10;
-        
+        this.bulletCooldown = 3;        // Number of update() calls to wait before making a new bullet
+        this.bulletCooldownCounter = 0;
     }
 
     preload() {
@@ -58,70 +58,57 @@ class ArrayBullet extends Phaser.Scene {
         this.enemySpeed = 2;
 
         // my.sprite.player = this.add.sprite(game.config.width/2, game.config.height - 40, "player");
-        // my.sprite.player.setScale(0.5);
-        my.sprite.player = new Player(this.left, this.right, this.playerSpeed);
+        my.sprite.player = new Player(this, game.config.width/2, game.config.height - 40, "player", null, this.left, this.right, 5);
+        my.sprite.player.setScale(0.5);
+
+        // In this approach, we create a single "group" game object which then holds up
+        // to 10 bullet sprites
+        // See more configuration options here: 
+        // https://rexrainbow.github.io/phaser3-rex-notes/docs/site/group/
+        my.sprite.bulletGroup = this.add.group({
+            active: true,
+            defaultKey: "playerLaser",
+            maxSize: 10,
+            runChildUpdate: true
+            }
+        )
+
+        // Create all of the bullets at once, and set them to inactive
+        // See more configuration options here:
+        // https://rexrainbow.github.io/phaser3-rex-notes/docs/site/group/
+        my.sprite.bulletGroup.createMultiple({
+            classType: Bullet,
+            active: false,
+            key: my.sprite.bulletGroup.defaultKey,
+            repeat: my.sprite.bulletGroup.maxSize-1
+        });
+        my.sprite.bulletGroup.propertyValueSet("speed", this.bulletSpeed);
 
         // update HTML description
         document.getElementById('description').innerHTML = '<h2>Game Object Group Bullet.js</h2>Left Arrow Key: Left // Right Arrow Key: Right // Space: Fire/Emit // N: Next Scene'
-
     }
 
     update() {
         let my = this.my;
-
-        // Moving left
-        // if (this.left.isDown) {
-        //     // Check to make sure the sprite can actually move left
-        //     if (my.sprite.player.x > (my.sprite.player.displayWidth/2)) {
-        //         my.sprite.player.x -= this.playerSpeed;
-
-        //     }
-        // }
-
-        // Moving right
-        // if (this.right.isDown) {
-        //     // Check to make sure the sprite can actually move right
-        //     if (my.sprite.player.x < (game.config.width - (my.sprite.player.displayWidth/2))) {
-        //         my.sprite.player.x += this.playerSpeed;
-        //     }
-        // }
-
-        my.sprite.player.update();
+        this.bulletCooldownCounter--;
 
         // Check for bullet being fired
-        // if (Phaser.Input.Keyboard.JustDown(this.space)) {
-        //     // Are we under our bullet quota?
-        //     if (my.sprite.bullet.length < this.maxBullets) {
-        //         my.sprite.bullet.push(this.add.sprite(
-        //             my.sprite.player.x, my.sprite.player.y-(my.sprite.player.displayHeight/2), "playerLaser")
-        //         );
-        //     }
-        // }
-
-        for (let bullet of my.sprite.bullet) {
-            bullet.update();
+        if (this.space.isDown) {
+            if (this.bulletCooldownCounter < 0) {
+                // Get the first inactive bullet, and make it active
+                let bullet = my.sprite.bulletGroup.getFirstDead();
+                // bullet will be null if there are no inactive (available) bullets
+                if (bullet != null) {
+                    this.bulletCooldownCounter = this.bulletCooldown;
+                    bullet.makeActive();
+                    bullet.x = my.sprite.player.x;
+                    bullet.y = my.sprite.player.y - (my.sprite.player.displayHeight/2);
+                }
+            }
         }
 
-        // Make all of the bullets move
-        // for (let bullet of my.sprite.bullet) {
-        //     bullet.y -= this.bulletSpeed;
-        // }
-
-        // Remove all of the bullets which are offscreen
-        // filter() goes through all of the elements of the array, and
-        // only returns those which **pass** the provided test (conditional)
-        // In this case, the condition is, is the y value of the bullet
-        // greater than zero minus half the display height of the bullet? 
-        // (i.e., is the bullet fully offscreen to the top?)
-        // We store the array returned from filter() back into the bullet
-        // array, overwriting it. 
-        // This does have the impact of re-creating the bullet array on every 
-        // update() call. 
-        my.sprite.bullet = my.sprite.bullet.filter((bullet) => bullet.y > -(bullet.displayHeight/2));
-
-        if (Phaser.Input.Keyboard.JustDown(this.nextScene)) {
-            this.scene.start("fixedArrayBullet");
-        }
+        // update the player avatar by by calling the player's update()
+        my.sprite.player.update();
 
     }
 }
