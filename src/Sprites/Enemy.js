@@ -4,7 +4,7 @@ class Enemy extends Phaser.GameObjects.Sprite {
     curve;
     path;
 
-    constructor(scene, x, y, texture, frame, enemySpeed) {
+    constructor(scene, x, y, texture, frame, enemySpeed, enemyColor) {
         super("pathMaker");
         super(scene, x, y, texture, frame);
 
@@ -17,6 +17,7 @@ class Enemy extends Phaser.GameObjects.Sprite {
         this.active = false;
 
         this.speed = enemySpeed;
+        this.color = enemyColor;
 
         this.path = new Path([x], [y]);
 

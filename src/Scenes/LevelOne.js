@@ -14,8 +14,13 @@ class LevelOne extends Phaser.Scene {
         this.bulletCooldown = 3;        // Number of update() calls to wait before making a new bullet
         this.bulletCooldownCounter = 0;
 
-        this.enemyCooldown = 5;
-        this.enemyCooldownCounter = 0;
+        this.my.sprite.redEnemy = [];
+        this.redEnemyCooldown = 5;
+        this.redEnemyCooldownCounter = 0;
+
+        this.my.sprite.greenEnemy = [];
+        this.greenEnemyCooldown = 5;
+        this.greenEnemyCooldownCounter = 0;
     }
 
     preload() {
@@ -112,8 +117,8 @@ class LevelOne extends Phaser.Scene {
         // update the player avatar by by calling the player's update()
         my.sprite.player.update();
 
-        if (this.enemyCooldown < 0) {
-            
+        if (this.redEnemyCooldown < 0) {
+            my.sprite.redEnemy.push(new Enemy())
         }
         
     }
