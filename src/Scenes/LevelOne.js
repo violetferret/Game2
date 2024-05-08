@@ -42,10 +42,6 @@ class ArrayBullet extends Phaser.Scene {
 
         let my = this.my;
 
-        my.sprite.player = this.add.sprite(game.config.width/2, game.config.height - 40, "player");
-        my.sprite.player.setScale(0.5);
-
-
         // Notice that in this approach, we don't create any bullet sprites in create(),
         // and instead wait until we need them, based on the number of space bar presses
 
@@ -61,6 +57,10 @@ class ArrayBullet extends Phaser.Scene {
         this.bulletSpeed = 5;
         this.enemySpeed = 2;
 
+        // my.sprite.player = this.add.sprite(game.config.width/2, game.config.height - 40, "player");
+        // my.sprite.player.setScale(0.5);
+        my.sprite.player = new Player(this.left, this.right, this.playerSpeed);
+
         // update HTML description
         document.getElementById('description').innerHTML = '<h2>Game Object Group Bullet.js</h2>Left Arrow Key: Left // Right Arrow Key: Right // Space: Fire/Emit // N: Next Scene'
 
@@ -70,37 +70,42 @@ class ArrayBullet extends Phaser.Scene {
         let my = this.my;
 
         // Moving left
-        if (this.left.isDown) {
-            // Check to make sure the sprite can actually move left
-            if (my.sprite.player.x > (my.sprite.player.displayWidth/2)) {
-                my.sprite.player.x -= this.playerSpeed;
-            }
-        }
+        // if (this.left.isDown) {
+        //     // Check to make sure the sprite can actually move left
+        //     if (my.sprite.player.x > (my.sprite.player.displayWidth/2)) {
+        //         my.sprite.player.x -= this.playerSpeed;
+
+        //     }
+        // }
 
         // Moving right
-        if (this.right.isDown) {
-            // Check to make sure the sprite can actually move right
-            if (my.sprite.player.x < (game.config.width - (my.sprite.player.displayWidth/2))) {
-                my.sprite.player.x += this.playerSpeed;
-            }
-        }
+        // if (this.right.isDown) {
+        //     // Check to make sure the sprite can actually move right
+        //     if (my.sprite.player.x < (game.config.width - (my.sprite.player.displayWidth/2))) {
+        //         my.sprite.player.x += this.playerSpeed;
+        //     }
+        // }
+
+        my.sprite.player.update();
 
         // Check for bullet being fired
-        if (Phaser.Input.Keyboard.JustDown(this.space)) {
-            // Are we under our bullet quota?
-            if (my.sprite.bullet.length < this.maxBullets) {
-                my.sprite.bullet.push(this.add.sprite(
-                    my.sprite.player.x, my.sprite.player.y-(my.sprite.player.displayHeight/2), "playerLaser")
-                );
-            }
-        }
+        // if (Phaser.Input.Keyboard.JustDown(this.space)) {
+        //     // Are we under our bullet quota?
+        //     if (my.sprite.bullet.length < this.maxBullets) {
+        //         my.sprite.bullet.push(this.add.sprite(
+        //             my.sprite.player.x, my.sprite.player.y-(my.sprite.player.displayHeight/2), "playerLaser")
+        //         );
+        //     }
+        // }
 
-        
+        for (let bullet of my.sprite.bullet) {
+            bullet.update();
+        }
 
         // Make all of the bullets move
-        for (let bullet of my.sprite.bullet) {
-            bullet.y -= this.bulletSpeed;
-        }
+        // for (let bullet of my.sprite.bullet) {
+        //     bullet.y -= this.bulletSpeed;
+        // }
 
         // Remove all of the bullets which are offscreen
         // filter() goes through all of the elements of the array, and

@@ -9,6 +9,9 @@ class GroupBullet extends Phaser.Scene {
 
         this.bulletCooldown = 3;        // Number of update() calls to wait before making a new bullet
         this.bulletCooldownCounter = 0;
+
+        this.enemyCooldown = 5;
+        this.enemyCooldownCounter = 0;
         
     }
 
