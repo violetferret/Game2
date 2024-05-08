@@ -11,11 +11,11 @@ class LevelOne extends Phaser.Scene {
         this.playerSpeed = 5;
         this.bulletSpeed = 5;
 
-        // Create a property inside "sprite" named "bullet".
-        // The bullet property has a value which is an array.
-        // This array will hold bindings (pointers) to bullet sprites
         this.bulletCooldown = 3;        // Number of update() calls to wait before making a new bullet
         this.bulletCooldownCounter = 0;
+
+        this.enemyCooldown = 5;
+        this.enemyCooldownCounter = 0;
     }
 
     preload() {
@@ -82,6 +82,7 @@ class LevelOne extends Phaser.Scene {
             key: my.sprite.bulletGroup.defaultKey,
             repeat: my.sprite.bulletGroup.maxSize-1
         });
+
         my.sprite.bulletGroup.propertyValueSet("speed", this.bulletSpeed);
 
         // update HTML description
@@ -91,6 +92,7 @@ class LevelOne extends Phaser.Scene {
     update() {
         let my = this.my;
         this.bulletCooldownCounter--;
+        this.enemyCooldownCounter--;
 
         // Check for bullet being fired
         if (this.space.isDown) {
@@ -110,6 +112,10 @@ class LevelOne extends Phaser.Scene {
         // update the player avatar by by calling the player's update()
         my.sprite.player.update();
 
+        if (this.enemyCooldown < 0) {
+            
+        }
+        
     }
 }
          

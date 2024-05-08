@@ -16,6 +16,8 @@ class Enemy extends Phaser.GameObjects.Sprite {
         this.visible = false;
         this.active = false;
 
+        this.speed = enemySpeed;
+
         this.path = new Path([x], [y]);
 
         scene.add.existing(this);
@@ -23,8 +25,9 @@ class Enemy extends Phaser.GameObjects.Sprite {
         return this;
     }
 
-    update() {
+    update(player) {
         if (this.active) {
+            this.startFollow();
             this.y -= this.speed;
             if (this.y < -(this.displayHeight/2)) {
                 this.makeInactive();
