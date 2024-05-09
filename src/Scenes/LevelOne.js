@@ -87,17 +87,16 @@ class LevelOne extends Phaser.Scene {
             key: my.sprite.bulletGroup.defaultKey,
             repeat: my.sprite.bulletGroup.maxSize-1
         });
-
         my.sprite.bulletGroup.propertyValueSet("speed", this.bulletSpeed);
 
         // update HTML description
-        document.getElementById('description').innerHTML = '<h2>Game Object Group Bullet.js</h2>Left Arrow Key: Left // Right Arrow Key: Right // Space: Fire/Emit // N: Next Scene'
+        document.getElementById('description').innerHTML = '<h2>Level 1</h2>Left Arrow Key: Left // Right Arrow Key: Right // Space: Fire/Emit // N: Next Scene'
     }
 
     update() {
         let my = this.my;
         this.bulletCooldownCounter--;
-        this.enemyCooldownCounter--;
+        this.redEnemyCooldownCounter -= 1;
 
         // Check for bullet being fired
         if (this.space.isDown) {
@@ -117,8 +116,15 @@ class LevelOne extends Phaser.Scene {
         // update the player avatar by by calling the player's update()
         my.sprite.player.update();
 
-        if (this.redEnemyCooldown < 0) {
-            my.sprite.redEnemy.push(new Enemy())
+        if (this.redEnemyCooldownCounter < 0) {
+            my.sprite.redEnemy.push(new Enemy(this, (500 + Math.floor(Math.random() * 100)), (700 + Math.floor(Math.random() * 100)), "redShip", null, this.enemySpeed, "red", my.sprite.player.X, my.sprite.player.Y));
+            console.log(my.sprite.redEnemy);
+            this.redEnemyCooldownCounter = this.redEnemyCooldown;
+            console.log(this.redEnemyCooldownCounter)
+        }
+
+        for (let redShip of my.sprite.redEnemy) {
+            redShip.update();
         }
         
     }
