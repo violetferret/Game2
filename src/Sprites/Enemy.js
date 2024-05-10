@@ -1,11 +1,8 @@
 class Enemy extends Phaser.GameObjects.Sprite {
-    // Class variable definitions -- these are all "undefined" to start
-    graphics;
-    curve;
-    path;
+
     preload() {
-        this.load.image("player", "assets/kenney_alien-ufo-pack/PNG/shipBlue_manned.png");            
-        this.load.image("heart", "assets/kenney_platformer-art-extended-enemies/Alien sprites/alienBlue_badge1.png");  
+        this.load.image("player", "assets/kenney_alien-ufo-pack/PNG/shipBlue_manned.png");
+        this.load.image("heart", "assets/kenney_platformer-art-extended-enemies/Alien sprites/alienBlue_badge1.png");
         this.load.image("background", "assets/kenney_space-shooter-redux/Backgrounds/blue.png");
         this.load.image("greenShip", "assets/kenney_space-shooter-redux/PNG/playerShip2_green.png");
         this.load.image("redShip", "assets/kenney_space-shooter-redux/PNG/playerShip2_red.png");
@@ -17,8 +14,7 @@ class Enemy extends Phaser.GameObjects.Sprite {
         this.load.image("redImpact", "assets/kenney_space-shooter-redux/PNG/Lasers/laserRed10.png");
     }
 
-    constructor(scene, x, y, texture, frame, enemySpeed, enemyColor, playerX, playerY) {
-        // super("pathMaker");
+    constructor(scene, x, y, texture, frame, enemySpeed, enemyColor) {
         super(scene, x, y, texture, frame);
 
         // this.enemyX = Math.floor(Math.random() * 500);
@@ -26,14 +22,14 @@ class Enemy extends Phaser.GameObjects.Sprite {
         this.x = x;
         this.y = y;
 
+        // this.enemyPath = this.add.path(x, y);
+        // this.enemyPath.lineTo(playerX, playerY);
+
         this.visible = false;
         this.active = false;
 
         this.speed = enemySpeed;
         this.color = enemyColor;
-
-        this.path = new Phaser.Curves.Path(x, y);
-        this.path.lineTo(playerX, playerY);
 
         scene.add.existing(this);
 
@@ -41,11 +37,28 @@ class Enemy extends Phaser.GameObjects.Sprite {
     }
 
     update() {
-        if (this.active) {
-            this.startFollow(this.path);
-            this.y -= this.speed;
-            if (this.y < -(this.displayHeight/2)) {
+        // Red ships
+        if (this.color == "red") {
+            if (this.active) {
+                //console.log(this.speed);
+                this.y += this.speed;
+            }
+
+            if (this.y < (this.displayHeight / 2)) {
                 this.makeInactive();
+                this.destroy()
+            }
+        } 
+
+        // Green ships
+        if (this.color == "green") {
+            if (this.active) {
+                this.y += this.speed;
+            }
+
+            if (this.y < (this.displayHeight / 2)) {
+                this.makeInactive();
+                this.destroy()
             }
         }
     }
