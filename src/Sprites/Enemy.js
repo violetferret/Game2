@@ -31,6 +31,12 @@ class Enemy extends Phaser.GameObjects.Sprite {
         this.speed = enemySpeed;
         this.color = enemyColor;
 
+        if (this.color == "red") {
+            this.scorePoints = 50;
+        } else if (this.color == "green") {
+            this.scorePoints = 150;
+        }
+
         scene.add.existing(this);
 
         return this;

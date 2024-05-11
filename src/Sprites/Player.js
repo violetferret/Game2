@@ -27,6 +27,8 @@ class Player extends Phaser.GameObjects.Sprite {
 
         scene.add.existing(this);
 
+        this.score = 0;
+
         return this;
     }
 
