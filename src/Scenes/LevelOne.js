@@ -13,9 +13,10 @@ class LevelOne extends Phaser.Scene {
         this.redEnemySpeed = 1.25;
         this.greenEnemySpeed = 1;
 
-        this.my.sprite.bullets = [];
+        this.my.sprite.bullet = [];
         this.bulletCooldown = 3;        // Number of update() calls to wait before making a new bullet
         this.bulletCooldownCounter = 0;
+        this.maxBullets = 10;
 
         this.my.sprite.redEnemy = [];
         this.redEnemyCooldown = 120;
@@ -131,8 +132,28 @@ class LevelOne extends Phaser.Scene {
         // my.sprite.bulletGroup.setX(-30);
 
         // Check for bullet being fired
-        if (this.space.isDown) {
-            if (this.bulletCooldownCounter < 0) {
+        if (Phaser.Input.Keyboard.JustDown(this.space)) {
+            
+            // Are we under our bullet quota?
+            if (my.sprite.bullet.length < this.maxBullets) {
+                my.sprite.bullet.push(this.add.sprite(
+                    my.sprite.player.x, my.sprite.player.y-(my.sprite.player.displayHeight/2), "playerLaser")
+                );
+                this.sound.play("playerShoot", {
+                    volume: 1   // Can adjust volume using this, goes from 0 to 1
+                 });
+            }
+        }
+
+        // Make all of the bullets move
+        for (let bullet of my.sprite.bullet) {
+            bullet.y -= this.bulletSpeed;
+        }
+
+        my.sprite.bullet = my.sprite.bullet.filter((bullet) => bullet.y > -(bullet.displayHeight/2));
+        // Check for bullet being fired
+        //if (this.space.isDown) {
+            //if (this.bulletCooldownCounter < 0) {
                 // console.log("hello")
                 // Get the first inactive bullet, and make it active
                 // let bullet = my.sprite.bulletGroup.getFirstDead();
@@ -150,42 +171,73 @@ class LevelOne extends Phaser.Scene {
                 //     bullet.y = my.sprite.player.y - (my.sprite.player.displayHeight / 2);
                 // }
 
-                my.sprite.bullets.push(new Bullet(this, my.sprite.player.x, my.sprite.player.y, "playerLaser"));
+                // my.sprite.bullet.push(new Bullet(this, my.sprite.player.x, my.sprite.player.y, "playerLaser"));
 
-                console.log(my.sprite.bullets)
+                //console.log(my.sprite.bullet)
                 //this.bulletCooldownCounter = this.bulletCooldown;
 
-            }
-        }
+            //}
+        //}
 
-        for (let bullet of my.sprite.bullets) {
-            // console.log("HIII")
-            bullet.makeActive();
-            bullet.update();
+        // for (let bullet of my.sprite.bullet) {
+        //     // console.log("HIII")
+        //     bullet.makeActive();
+        //     bullet.update();
 
-            if (bullet.y < 1) {
-                bullet.makeInactive();
-                bullet.destroy();
-            }
-        }
+        //     if (bullet.y < 1) {
+        //         bullet.makeInactive();
+        //         bullet.destroy();
+        //     }
+        // }
 
         // Check for collision with the enemy ships
-        for (let bullet of my.sprite.bullets) {
+        for (let bullet of my.sprite.bullet) {
             for (let redShip of my.sprite.redEnemy) {
                 // console.log(redShip)
                 // let = bullet = my.sprite.bulletGroup.getFirst();
                 // console.log(bullet)
-                if (bullet != null) {
+                if (bullet != null && redShip.active) {
                     // console.log("heyo")
                     if (this.collides(redShip, bullet)) {
                         // start animation
-                        this.crash = this.add.sprite(my.sprite.redEnemy.x, my.sprite.redEnemy.y, "redImpact").setScale(0.25);
+                        if (this.crash) {
+                            this.crash.destroy();
+                        }
+                        this.crash = this.add.sprite(redShip.x, redShip.y, "redImpact").setScale(0.5);
+                        
+                        this.sound.play("enemyDeath", {
+                            volume: .5   // Can adjust volume using this, goes from 0 to 1
+                         });
                         // clear out bullet -- put y offscreen, will get reaped next update
-                        bullet.makeInactive();
-                        redShip.makeInactive();
+                        // bullet.makeInactive();
+                        bullet.destroy();
+                        redShip.destroy();
                         // redShip.x = -100;
                         // Update score
                         my.sprite.player.score += redShip.scorePoints;
+                        // this.updateScore(my.sprite.player);
+                    }
+                }
+            }
+            for (let greenShip of my.sprite.greenEnemy) {
+                // console.log(redShip)
+                // let = bullet = my.sprite.bulletGroup.getFirst();
+                // console.log(bullet)
+                if (bullet != null && greenShip.active) {
+                    // console.log("heyo")
+                    if (this.collides(greenShip, bullet)) {
+                        // start animation
+                        this.crash = this.add.sprite(greenShip.x, greenShip.y, "redImpact").setScale(0.5);
+                        this.sound.play("enemyDeath", {
+                            volume: .5  // Can adjust volume using this, goes from 0 to 1
+                         });
+                        // clear out bullet -- put y offscreen, will get reaped next update
+                        // bullet.makeInactive();
+                        bullet.destroy();
+                        greenShip.destroy();
+                        // redShip.x = -100;
+                        // Update score
+                        my.sprite.player.score += greenShip.scorePoints;
                         // this.updateScore(my.sprite.player);
                     }
 
