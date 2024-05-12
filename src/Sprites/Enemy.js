@@ -36,6 +36,7 @@ class Enemy extends Phaser.GameObjects.Sprite {
         } else if (this.color == "green") {
             this.scorePoints = 150;
         }
+        
 
         scene.add.existing(this);
 
@@ -52,7 +53,6 @@ class Enemy extends Phaser.GameObjects.Sprite {
 
             if (this.y < (this.displayHeight / 2)) {
                 this.makeInactive();
-                this.destroy()
             }
         } 
 

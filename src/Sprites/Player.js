@@ -25,9 +25,11 @@ class Player extends Phaser.GameObjects.Sprite {
         this.right = rightKey;
         this.playerSpeed = playerSpeed;
 
-        scene.add.existing(this);
-
         this.score = 0;
+
+        this.health = 5;
+
+        scene.add.existing(this);
 
         return this;
     }

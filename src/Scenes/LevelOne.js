@@ -9,7 +9,8 @@ class LevelOne extends Phaser.Scene {
 
         // Set movement speeds (in pixels/tick)
         this.playerSpeed = 5;
-        this.bulletSpeed = 5;
+        this.bulletSpeed = 8;
+        this.enemyBulletSpeed = 6;
         this.redEnemySpeed = 1.25;
         this.greenEnemySpeed = 1;
 
@@ -23,12 +24,14 @@ class LevelOne extends Phaser.Scene {
         this.redEnemyCooldownCounter = 0;
 
         this.my.sprite.greenEnemy = [];
+        this.my.sprite.greenEnemyBullet = [];
         this.greenEnemyCooldown = 200;
         this.greenEnemyCooldownCounter = 0;
 
-        this.waveCounter = 0;
+        this.crash;
 
-        this.myScore = 0;
+        this.waveCounter = 1250;
+        this.crashCounter = 0;
     }
 
     preload() {
@@ -81,39 +84,7 @@ class LevelOne extends Phaser.Scene {
         my.sprite.player.setScale(0.5);
 
         // Create text
-        this.my.score = this.add.bitmapText(20, 0, "rocketSquare", "Score " + my.sprite.player.score);
-
-        // In this approach, we create a single "group" game object which then holds up
-        // to 10 bullet sprites
-        // See more configuration options here: 
-        // https://rexrainbow.github.io/phaser3-rex-notes/docs/site/group/
-        // my.sprite.bulletGroup = this.add.group({
-        //     active: true,
-        //     defaultKey: "playerLaser",
-        //     maxSize: 10,
-        //     runChildUpdate: true
-        // }
-        // )
-
-        // Create all of the bullets at once, and set them to inactive
-        // See more configuration options here:
-        // https://rexrainbow.github.io/phaser3-rex-notes/docs/site/group/
-        // my.sprite.bulletGroup.createMultiple({
-        //     classType: Bullet,
-        //     active: false,
-        //     key: my.sprite.bulletGroup.defaultKey,
-        //     repeat: my.sprite.bulletGroup.maxSize - 1
-        // });
-        // my.sprite.bulletGroup.propertyValueSet("speed", this.bulletSpeed);
-        // my.sprite.bulletGroup.propertyValueSet("playerX", -30);
-
-
-        // console.log(my.sprite.bulletGroup)
-
-        // my.sprite.bulletGroup.getChildren().forEach(function (bullet) {
-        //     console.log(bullet.x);
-        //     bullet.setX(-30);
-        // })
+        this.my.score = this.add.bitmapText(320, 0, "rocketSquare", "Score " + my.sprite.player.score);
 
         // update HTML description
         document.getElementById('description').innerHTML = '<h2>Level 1</h2>Left Arrow Key: Left // Right Arrow Key: Right // Space: Fire/Emit // N: Next Scene'
@@ -126,22 +97,22 @@ class LevelOne extends Phaser.Scene {
         this.greenEnemyCooldownCounter--;
 
         this.waveCounter++;
-        // console.log(this.waveCounter);
-        // console.log(this.redEnemyCooldownCounter)
 
-        // my.sprite.bulletGroup.setX(-30);
+        for (let heart = 0; heart < my.sprite.player.health; heart++) {
+            // this.add.image()
+        }
 
         // Check for bullet being fired
         if (Phaser.Input.Keyboard.JustDown(this.space)) {
-            
+
             // Are we under our bullet quota?
             if (my.sprite.bullet.length < this.maxBullets) {
                 my.sprite.bullet.push(this.add.sprite(
-                    my.sprite.player.x, my.sprite.player.y-(my.sprite.player.displayHeight/2), "playerLaser")
+                    my.sprite.player.x, my.sprite.player.y - (my.sprite.player.displayHeight / 2), "playerLaser")
                 );
                 this.sound.play("playerShoot", {
                     volume: 1   // Can adjust volume using this, goes from 0 to 1
-                 });
+                });
             }
         }
 
@@ -150,96 +121,100 @@ class LevelOne extends Phaser.Scene {
             bullet.y -= this.bulletSpeed;
         }
 
-        my.sprite.bullet = my.sprite.bullet.filter((bullet) => bullet.y > -(bullet.displayHeight/2));
-        // Check for bullet being fired
-        //if (this.space.isDown) {
-            //if (this.bulletCooldownCounter < 0) {
-                // console.log("hello")
-                // Get the first inactive bullet, and make it active
-                // let bullet = my.sprite.bulletGroup.getFirstDead();
-                // bullet will be null if there are no inactive (available) bullets
-                // if (bullet != null) {
-                //     this.bulletCooldownCounter = this.bulletCooldown;
-                //     bullet.makeActive();
-                //     // Play sound
-                //     this.sound.play("playerShoot", {
-                //         volume: 1   // Can adjust volume using this, goes from 0 to 1
-                //     });
-
-                //     // Move bullet
-                //     bullet.x = my.sprite.player.x;
-                //     bullet.y = my.sprite.player.y - (my.sprite.player.displayHeight / 2);
-                // }
-
-                // my.sprite.bullet.push(new Bullet(this, my.sprite.player.x, my.sprite.player.y, "playerLaser"));
-
-                //console.log(my.sprite.bullet)
-                //this.bulletCooldownCounter = this.bulletCooldown;
-
-            //}
-        //}
-
-        // for (let bullet of my.sprite.bullet) {
-        //     // console.log("HIII")
-        //     bullet.makeActive();
-        //     bullet.update();
-
-        //     if (bullet.y < 1) {
-        //         bullet.makeInactive();
-        //         bullet.destroy();
-        //     }
-        // }
+        my.sprite.bullet = my.sprite.bullet.filter((bullet) => bullet.y > -(bullet.displayHeight / 2));
 
         // Check for collision with the enemy ships
         for (let bullet of my.sprite.bullet) {
             for (let redShip of my.sprite.redEnemy) {
-                // console.log(redShip)
-                // let = bullet = my.sprite.bulletGroup.getFirst();
-                // console.log(bullet)
-                if (bullet != null && redShip.active) {
+                if (bullet.active && redShip.active) {
                     // console.log("heyo")
                     if (this.collides(redShip, bullet)) {
+                        this.crashCounter = this.waveCounter;
                         // start animation
                         if (this.crash) {
                             this.crash.destroy();
                         }
                         this.crash = this.add.sprite(redShip.x, redShip.y, "redImpact").setScale(0.5);
-                        
+
                         this.sound.play("enemyDeath", {
                             volume: .5   // Can adjust volume using this, goes from 0 to 1
-                         });
-                        // clear out bullet -- put y offscreen, will get reaped next update
-                        // bullet.makeInactive();
-                        bullet.destroy();
-                        redShip.destroy();
-                        // redShip.x = -100;
-                        // Update score
+                        });
                         my.sprite.player.score += redShip.scorePoints;
-                        // this.updateScore(my.sprite.player);
+
+                        redShip.x = -100;
+                        redShip.y = -100;
+                        bullet.y = -100;
+
+                        console.log(my.sprite.player.score)
+                        this.updateScore(my.sprite.player.score);
                     }
                 }
             }
+
+
+
             for (let greenShip of my.sprite.greenEnemy) {
-                // console.log(redShip)
-                // let = bullet = my.sprite.bulletGroup.getFirst();
-                // console.log(bullet)
-                if (bullet != null && greenShip.active) {
-                    // console.log("heyo")
+
+                if (bullet.active && greenShip.active) {
+
                     if (this.collides(greenShip, bullet)) {
+                        this.crashCounter = this.waveCounter;
                         // start animation
-                        this.crash = this.add.sprite(greenShip.x, greenShip.y, "redImpact").setScale(0.5);
+                        if (this.crash) {
+                            this.crash.destroy();
+                        }
+                        this.crash = this.add.sprite(greenShip.x, greenShip.y, "greenImpact").setScale(0.5);
                         this.sound.play("enemyDeath", {
                             volume: .5  // Can adjust volume using this, goes from 0 to 1
-                         });
-                        // clear out bullet -- put y offscreen, will get reaped next update
-                        // bullet.makeInactive();
-                        bullet.destroy();
-                        greenShip.destroy();
-                        // redShip.x = -100;
-                        // Update score
+                        });
                         my.sprite.player.score += greenShip.scorePoints;
-                        // this.updateScore(my.sprite.player);
+                        greenShip.x = -100;
+                        greenShip.y = 700;
+                        bullet.y = -100;
+
+                        // Update score
+                        this.updateScore(my.sprite.player.score);
                     }
+
+                }
+            }
+        }
+
+        for (let greenShip in my.sprite.greenEnemy) {
+            // console.log(my.sprite.greenEnemy[greenShip]);
+            if (my.sprite.greenEnemy[greenShip].active) {
+                // console.log(my.sprite.greenEnemy[greenShip].y);
+                if ((this.waveCounter + (greenShip * 15)) % 50 == 0 && (my.sprite.greenEnemy[greenShip].y < 600)) {
+                    my.sprite.greenEnemyBullet.push(this.add.sprite(
+                        my.sprite.greenEnemy[greenShip].x, my.sprite.greenEnemy[greenShip].y - (my.sprite.greenEnemy[greenShip].displayHeight / 2), "greenLaser")
+                    );
+                    this.sound.play("enemyShoot", {
+                        volume: .25   // Can adjust volume using this, goes from 0 to 1
+                    });
+                }
+            }
+        }
+
+        // Make all of the bullets move
+        for (let bullet of my.sprite.greenEnemyBullet) {
+            // console.log(bullet)
+            bullet.visible = true;
+            bullet.y += this.enemyBulletSpeed;
+            
+            
+        }
+
+        my.sprite.greenEnemyBullet = my.sprite.greenEnemyBullet.filter((bullet) => bullet.y > -(bullet.displayHeight / 2));
+
+        // destroy crash image 
+        if (this.waveCounter == this.crashCounter + 20) {
+            this.crash.visible = false;
+        }
+
+        // check for enemy bullet collisions
+        for (let bullet of my.sprite.greenEnemyBullet) {
+            if (bullet.active) {
+                if (this.collides(bullet, my.sprite.player)) {
 
                 }
             }
@@ -249,14 +224,11 @@ class LevelOne extends Phaser.Scene {
         my.sprite.player.update();
 
         // Wave 1 -- red ships only
-        if (this.waveCounter < 2000) {
+        if (this.waveCounter < 1000) {
             // Red ships 
             if (this.redEnemyCooldownCounter < 0) {
-                // x (Math.floor(Math.random() * 500))
                 my.sprite.redEnemy.push(new Enemy(this, (Math.floor(Math.random() * 500)), 20, "redShip", null, this.redEnemySpeed, "red"));
-                //console.log(my.sprite.redEnemy);
                 this.redEnemyCooldownCounter = this.redEnemyCooldown;
-                //console.log(this.redEnemyCooldownCounter)
             }
 
             for (let redShip of my.sprite.redEnemy) {
@@ -267,19 +239,17 @@ class LevelOne extends Phaser.Scene {
             }
 
             // Wave 2 -- green ships only 
-        } else if (this.waveCounter >= 3000 && this.waveCounter < 5000) {
+        } else if (this.waveCounter >= 1000 && this.waveCounter < 1250) {
             // Reset wave 1 ships
             for (let redShip of my.sprite.redEnemy) {
                 redShip.makeInactive();
             }
+        } else if (this.waveCounter >= 1250 && this.waveCounter < 5000) {
 
             // Green ships
             if (this.greenEnemyCooldownCounter < 0) {
-                // x (Math.floor(Math.random() * 500))
                 my.sprite.greenEnemy.push(new Enemy(this, (Math.floor(Math.random() * 500)), 20, "greenShip", null, this.greenEnemySpeed, "green"));
-                //console.log(my.sprite.redEnemy);
                 this.greenEnemyCooldownCounter = this.greenEnemyCooldown;
-                //console.log(this.redEnemyCooldownCounter)
             }
 
             for (let greenShip of my.sprite.greenEnemy) {
@@ -289,12 +259,14 @@ class LevelOne extends Phaser.Scene {
                 greenShip.update();
             }
 
-            // Wave 3 -- red and green ships
-        } else if (this.waveCounter >= 6000 && this.waveCounter < 8000) {
+        } else if (this.waveCounter >= 5000 && this.waveCounter < 6000) {
             // Reset wave 2 ships
             for (let greenShip of my.sprite.greenEnemy) {
                 greenShip.makeInactive();
             }
+
+            // Wave 3 -- red and green ships
+        } else if (this.waveCounter >= 6000 && this.waveCounter < 8000) {
 
             // Red ships 
             if (this.redEnemyCooldownCounter < 0) {
@@ -355,7 +327,7 @@ class LevelOne extends Phaser.Scene {
         return true;
     }
 
-    updateScore(player) {
-        this.my.text.score.setText("Score " + player.score);
+    updateScore(score) {
+        this.my.score.setText("Score " + score);
     }
 }
