@@ -10,7 +10,7 @@ class LevelOne extends Phaser.Scene {
         // Set movement speeds (in pixels/tick)
         this.playerSpeed = 5;
         this.bulletSpeed = 8;
-        this.enemyBulletSpeed = 6;
+        this.enemyBulletSpeed = 5;
         this.redEnemySpeed = 1.25;
         this.greenEnemySpeed = 1;
 
@@ -22,7 +22,7 @@ class LevelOne extends Phaser.Scene {
 
 
         this.my.sprite.redEnemy = [];
-        this.redEnemyCooldown = 120;
+        this.redEnemyCooldown = 100;
         this.redEnemyCooldownCounter = 0;
 
         this.my.sprite.greenEnemy = [];
@@ -32,7 +32,8 @@ class LevelOne extends Phaser.Scene {
 
         this.crash;
 
-        this.waveCounter = 1250;
+        this.wave = 1;
+        this.waveCounter = 0;
         this.crashCounter = 0;
     }
 
@@ -53,6 +54,7 @@ class LevelOne extends Phaser.Scene {
         this.load.image("redImpact", "assets/kenney_alien-ufo-pack/PNG/laserPink_burst.png");
 
         this.load.audio("enemyDeath", "assets/kenney_sci-fi-sounds/Audio/laserLarge_002.ogg");
+        this.load.audio("playerHurt", "assets/kenney_space-shooter-redux/Bonus/sfx_twoTone.ogg");
 
         this.load.audio("playerShoot", "assets/kenney_space-shooter-redux/Bonus/sfx_laser1.ogg");
         this.load.audio("enemyShoot", "assets/kenney_space-shooter-redux/Bonus/sfx_laser2.ogg");
@@ -94,7 +96,8 @@ class LevelOne extends Phaser.Scene {
         }
 
         // Create text
-        this.my.score = this.add.bitmapText(320, 0, "rocketSquare", "Score " + my.sprite.player.score);
+        this.my.score = this.add.bitmapText(240, 12, "rocketSquare", "Score " + my.sprite.player.score);
+        // this.my.wave = this.add.bitmapText(320, 0, "rocketSquare", "Wave " + this.wave);
 
         // update HTML description
         document.getElementById('description').innerHTML = '<h2>Level 1</h2>Left Arrow Key: Left // Right Arrow Key: Right // Space: Fire/Emit // N: Next Scene'
@@ -108,9 +111,14 @@ class LevelOne extends Phaser.Scene {
 
         this.waveCounter++;
 
-        for (let heart = 0; heart < my.sprite.player.health; heart++) {
+        for (let heart = 0; heart < 5; heart++) {
             //console.log(this.lives[heart])
-            this.lives[heart].visible = true;
+            //console.log(heart)
+            if (heart < my.sprite.player.health) {
+                this.lives[heart].visible = true;
+            } else {
+                this.lives[heart].visible = false;
+            }
         }
 
 
@@ -194,7 +202,7 @@ class LevelOne extends Phaser.Scene {
 
         for (let greenShip in my.sprite.greenEnemy) {
             if (my.sprite.greenEnemy[greenShip].active) {
-                if ((this.waveCounter + (greenShip * 15)) % 50 == 0 && (my.sprite.greenEnemy[greenShip].y < 600)) {
+                if ((this.waveCounter + (greenShip * 15)) % 70 == 0 && (my.sprite.greenEnemy[greenShip].y < 600)) {
                     my.sprite.greenEnemyBullet.push(this.add.sprite(
                         my.sprite.greenEnemy[greenShip].x, my.sprite.greenEnemy[greenShip].y - (my.sprite.greenEnemy[greenShip].displayHeight / 2), "greenLaser")
                     );
@@ -228,6 +236,9 @@ class LevelOne extends Phaser.Scene {
                     my.sprite.player.score -= 100;
                     bullet.y = -100;
                     my.sprite.player.health--;
+                    this.sound.play("playerHurt", {
+                        volume: 1   // Can adjust volume using this, goes from 0 to 1
+                    });
                 }
             }
         }
@@ -240,7 +251,7 @@ class LevelOne extends Phaser.Scene {
         if (this.waveCounter < 1000) {
             // Red ships 
             if (this.redEnemyCooldownCounter < 0) {
-                my.sprite.redEnemy.push(new Enemy(this, (Math.floor(Math.random() * 500)), 20, "redShip", null, this.redEnemySpeed, "red"));
+                my.sprite.redEnemy.push(new Enemy(this, (10 + (Math.floor(Math.random() * 480))), 30, "redShip", null, this.redEnemySpeed, "red"));
                 this.redEnemyCooldownCounter = this.redEnemyCooldown;
             }
 
@@ -255,9 +266,9 @@ class LevelOne extends Phaser.Scene {
         } else if (this.waveCounter >= 1000 && this.waveCounter < 1250) {
             // Reset wave 1 ships
             for (let redShip of my.sprite.redEnemy) {
-                redShip.makeInactive();
+                redShip.y = -100;
             }
-        } else if (this.waveCounter >= 1250 && this.waveCounter < 5000) {
+        } else if (this.waveCounter >= 1250 && this.waveCounter < 2250) {
 
             // Green ships
             if (this.greenEnemyCooldownCounter < 0) {
@@ -272,19 +283,20 @@ class LevelOne extends Phaser.Scene {
                 greenShip.update();
             }
 
-        } else if (this.waveCounter >= 5000 && this.waveCounter < 6000) {
+        } else if (this.waveCounter >= 2250 && this.waveCounter < 2500) {
             // Reset wave 2 ships
             for (let greenShip of my.sprite.greenEnemy) {
-                greenShip.makeInactive();
+                greenShip.y = -100;
+                greenShip.makeInactive()
             }
 
             // Wave 3 -- red and green ships
-        } else if (this.waveCounter >= 6000 && this.waveCounter < 8000) {
+        } else if (this.waveCounter >= 2500 && this.waveCounter < 4000) {
 
             // Red ships 
             if (this.redEnemyCooldownCounter < 0) {
                 // x (Math.floor(Math.random() * 500))
-                my.sprite.redEnemy.push(new Enemy(this, (Math.floor(Math.random() * 500)), 20, "redShip", null, this.redEnemySpeed, "red"));
+                my.sprite.redEnemy.push(new Enemy(this, (10 + (Math.floor(Math.random() * 480))), 30, "redShip", null, this.redEnemySpeed, "red"));
                 this.redEnemyCooldownCounter = this.redEnemyCooldown;
             }
 
@@ -309,16 +321,18 @@ class LevelOne extends Phaser.Scene {
                 greenShip.update();
             }
 
-        } else if (this.waveCounter >= 8000) {
-            // Reset wave 2 ships
+        } else if (this.waveCounter >= 4000 && this.waveCounter < 4250) {
+            // Reset wave 3 ships
             for (let redShip of my.sprite.redEnemy) {
-                redShip.makeInactive();
+                redShip.y = -100;
             }
             for (let greenShip of my.sprite.greenEnemy) {
-                greenShip.makeInactive();
+                greenShip.y = -100;
+                greenShip.makeInactive()
             }
 
-            // RESET
+        } else if (this.waveCounter >= 4250) {
+            this.waveCounter = 0;
         }
     }
 
