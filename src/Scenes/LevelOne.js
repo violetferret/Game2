@@ -18,6 +18,8 @@ class LevelOne extends Phaser.Scene {
         this.bulletCooldown = 3;        // Number of update() calls to wait before making a new bullet
         this.bulletCooldownCounter = 0;
         this.maxBullets = 10;
+        this.lives = [];
+
 
         this.my.sprite.redEnemy = [];
         this.redEnemyCooldown = 120;
@@ -83,6 +85,14 @@ class LevelOne extends Phaser.Scene {
         my.sprite.player = new Player(this, game.config.width / 2, game.config.height - 40, "player", null, this.left, this.right, 5);
         my.sprite.player.setScale(0.5);
 
+
+        for (let heart = 0; heart < my.sprite.player.health; heart++) {
+            let image = this.add.image(30 + (heart * 40), 30, "heart");
+            image.setScale(0.75);
+            image.visible = false;
+            this.lives.push(image);
+        }
+
         // Create text
         this.my.score = this.add.bitmapText(320, 0, "rocketSquare", "Score " + my.sprite.player.score);
 
@@ -99,8 +109,10 @@ class LevelOne extends Phaser.Scene {
         this.waveCounter++;
 
         for (let heart = 0; heart < my.sprite.player.health; heart++) {
-            // this.add.image()
+            //console.log(this.lives[heart])
+            this.lives[heart].visible = true;
         }
+
 
         // Check for bullet being fired
         if (Phaser.Input.Keyboard.JustDown(this.space)) {
@@ -127,13 +139,14 @@ class LevelOne extends Phaser.Scene {
         for (let bullet of my.sprite.bullet) {
             for (let redShip of my.sprite.redEnemy) {
                 if (bullet.active && redShip.active) {
-                    // console.log("heyo")
                     if (this.collides(redShip, bullet)) {
                         this.crashCounter = this.waveCounter;
+
                         // start animation
                         if (this.crash) {
                             this.crash.destroy();
                         }
+
                         this.crash = this.add.sprite(redShip.x, redShip.y, "redImpact").setScale(0.5);
 
                         this.sound.play("enemyDeath", {
@@ -145,7 +158,6 @@ class LevelOne extends Phaser.Scene {
                         redShip.y = -100;
                         bullet.y = -100;
 
-                        console.log(my.sprite.player.score)
                         this.updateScore(my.sprite.player.score);
                     }
                 }
@@ -181,9 +193,7 @@ class LevelOne extends Phaser.Scene {
         }
 
         for (let greenShip in my.sprite.greenEnemy) {
-            // console.log(my.sprite.greenEnemy[greenShip]);
             if (my.sprite.greenEnemy[greenShip].active) {
-                // console.log(my.sprite.greenEnemy[greenShip].y);
                 if ((this.waveCounter + (greenShip * 15)) % 50 == 0 && (my.sprite.greenEnemy[greenShip].y < 600)) {
                     my.sprite.greenEnemyBullet.push(this.add.sprite(
                         my.sprite.greenEnemy[greenShip].x, my.sprite.greenEnemy[greenShip].y - (my.sprite.greenEnemy[greenShip].displayHeight / 2), "greenLaser")
@@ -197,11 +207,9 @@ class LevelOne extends Phaser.Scene {
 
         // Make all of the bullets move
         for (let bullet of my.sprite.greenEnemyBullet) {
-            // console.log(bullet)
             bullet.visible = true;
             bullet.y += this.enemyBulletSpeed;
-            
-            
+
         }
 
         my.sprite.greenEnemyBullet = my.sprite.greenEnemyBullet.filter((bullet) => bullet.y > -(bullet.displayHeight / 2));
@@ -215,10 +223,15 @@ class LevelOne extends Phaser.Scene {
         for (let bullet of my.sprite.greenEnemyBullet) {
             if (bullet.active) {
                 if (this.collides(bullet, my.sprite.player)) {
-
+                    // repeating too many times
+                    // console.log(my.sprite.player.health)
+                    my.sprite.player.score -= 100;
+                    bullet.y = -100;
+                    my.sprite.player.health--;
                 }
             }
         }
+
         // }
         // update the player avatar by by calling the player's update()
         my.sprite.player.update();
@@ -272,9 +285,7 @@ class LevelOne extends Phaser.Scene {
             if (this.redEnemyCooldownCounter < 0) {
                 // x (Math.floor(Math.random() * 500))
                 my.sprite.redEnemy.push(new Enemy(this, (Math.floor(Math.random() * 500)), 20, "redShip", null, this.redEnemySpeed, "red"));
-                //console.log(my.sprite.redEnemy);
                 this.redEnemyCooldownCounter = this.redEnemyCooldown;
-                //console.log(this.redEnemyCooldownCounter)
             }
 
             for (let redShip of my.sprite.redEnemy) {
@@ -288,9 +299,7 @@ class LevelOne extends Phaser.Scene {
             if (this.greenEnemyCooldownCounter < 0) {
                 // x (Math.floor(Math.random() * 500))
                 my.sprite.greenEnemy.push(new Enemy(this, (Math.floor(Math.random() * 500)), 20, "greenShip", null, this.greenEnemySpeed, "green"));
-                //console.log(my.sprite.redEnemy);
                 this.greenEnemyCooldownCounter = this.greenEnemyCooldown;
-                //console.log(this.redEnemyCooldownCounter)
             }
 
             for (let greenShip of my.sprite.greenEnemy) {
@@ -310,15 +319,13 @@ class LevelOne extends Phaser.Scene {
             }
 
             // RESET
-            //console.log("yay");
         }
     }
 
     // A center-radius AABB collision check
     collides(a, b) {
-        //console.log(a.x, a.y, b.x, b.y)
-        //console.log(a.displayWidth)
         if (Math.abs(a.x - b.x) > (a.displayWidth / 2 + b.displayWidth / 2)) {
+
             return false;
         }
         if (Math.abs(a.y - b.y) > (a.displayHeight / 2 + b.displayHeight / 2)) {
