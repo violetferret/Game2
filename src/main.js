@@ -22,7 +22,7 @@ let config = {
     fps: { forceSetTimeOut: true, target: 60 },   // ensure consistent timing across machines
     width: 500,
     height: 700,
-    scene: [LevelOne]
+    scene: [Levels, GameOver]
 }
 
 // Global variable to hold sprites
